@@ -1,0 +1,40 @@
+﻿@model IEnumerable<EAI_Sample_Project.EFFactory.Building>
+
+@{
+    ViewBag.Title = "ListAllAssets";
+}
+
+<h2>Asset Management System</h2>
+
+<p>
+    @Html.ActionLink("New Asset", "Create")
+</p>
+<table class="table">
+    <tr>
+        <th>
+            @Html.DisplayNameFor(model => model.Name)
+        </th>
+        <th>
+            @Html.DisplayName("Count of Users")
+
+        </th>
+    </tr>
+
+@foreach (var item in Model) {
+    <tr>
+        <td>
+            @Html.DisplayFor(modelItem => item.Name)
+        </td>
+
+        <td>
+            <div> @item.Users.Count() </div>
+        </td>
+        <td>
+            @Html.ActionLink("Edit", "Edit", new { id=item.ID }) |
+            @Html.ActionLink("Details", "Details", new { id=item.ID }) |
+            @Html.ActionLink("Delete", "Delete", new { id=item.ID })
+        </td>
+    </tr>
+}
+
+</table>

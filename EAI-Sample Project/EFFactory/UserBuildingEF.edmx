@@ -1,0 +1,173 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="3.0" xmlns:edmx="http://schemas.microsoft.com/ado/2009/11/edmx">
+  <!-- EF Runtime content -->
+  <edmx:Runtime>
+    <!-- SSDL content -->
+    <edmx:StorageModels>
+    <Schema Namespace="EAIDemoModel.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2012" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+        <EntityType Name="Building">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="int" Nullable="false" />
+          <Property Name="Name" Type="varchar" MaxLength="200" />
+        </EntityType>
+        <EntityType Name="UserBuilding">
+          <Key>
+            <PropertyRef Name="UserID" />
+            <PropertyRef Name="BuildingID" />
+          </Key>
+          <Property Name="UserID" Type="int" Nullable="false" />
+          <Property Name="BuildingID" Type="int" Nullable="false" />
+        </EntityType>
+        <EntityType Name="Users">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="int" Nullable="false" />
+          <Property Name="Name" Type="varchar" MaxLength="200" />
+          <Property Name="Email" Type="varchar" MaxLength="200" />
+        </EntityType>
+        <Association Name="FK_UserBuilding_Building">
+          <End Role="Building" Type="Self.Building" Multiplicity="1" />
+          <End Role="UserBuilding" Type="Self.UserBuilding" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Building">
+              <PropertyRef Name="ID" />
+            </Principal>
+            <Dependent Role="UserBuilding">
+              <PropertyRef Name="BuildingID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_UserBuilding_Users">
+          <End Role="Users" Type="Self.Users" Multiplicity="1" />
+          <End Role="UserBuilding" Type="Self.UserBuilding" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Users">
+              <PropertyRef Name="ID" />
+            </Principal>
+            <Dependent Role="UserBuilding">
+              <PropertyRef Name="UserID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Function Name="sp_GetBuildingCountforUsers" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo" />
+        <EntityContainer Name="EAIDemoModelStoreContainer">
+          <EntitySet Name="Building" EntityType="Self.Building" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="UserBuilding" EntityType="Self.UserBuilding" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Users" EntityType="Self.Users" Schema="dbo" store:Type="Tables" />
+          <AssociationSet Name="FK_UserBuilding_Building" Association="Self.FK_UserBuilding_Building">
+            <End Role="Building" EntitySet="Building" />
+            <End Role="UserBuilding" EntitySet="UserBuilding" />
+          </AssociationSet>
+          <AssociationSet Name="FK_UserBuilding_Users" Association="Self.FK_UserBuilding_Users">
+            <End Role="Users" EntitySet="Users" />
+            <End Role="UserBuilding" EntitySet="UserBuilding" />
+          </AssociationSet>
+        </EntityContainer>
+      </Schema></edmx:StorageModels>
+    <!-- CSDL content -->
+    <edmx:ConceptualModels>
+      <Schema Namespace="EAIDemoModel" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
+        <EntityType Name="Building">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="Int32" Nullable="false" />
+          <Property Name="Name" Type="String" MaxLength="200" FixedLength="false" Unicode="false" />
+          <NavigationProperty Name="Users" Relationship="Self.UserBuilding" FromRole="Building" ToRole="Users" />
+        </EntityType>
+        <EntityType Name="User">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="Int32" Nullable="false" />
+          <Property Name="Name" Type="String" MaxLength="200" FixedLength="false" Unicode="false" />
+          <Property Name="Email" Type="String" MaxLength="200" FixedLength="false" Unicode="false" />
+          <NavigationProperty Name="Buildings" Relationship="Self.UserBuilding" FromRole="Users" ToRole="Building" />
+        </EntityType>
+        <Association Name="UserBuilding">
+          <End Role="Building" Type="Self.Building" Multiplicity="*" />
+          <End Role="Users" Type="Self.User" Multiplicity="*" />
+        </Association>
+        <EntityContainer Name="EAIDemoEntities" annotation:LazyLoadingEnabled="true">
+          <EntitySet Name="Buildings" EntityType="Self.Building" />
+          <EntitySet Name="Users" EntityType="Self.User" />
+          <AssociationSet Name="UserBuilding" Association="Self.UserBuilding">
+            <End Role="Building" EntitySet="Buildings" />
+            <End Role="Users" EntitySet="Users" />
+          </AssociationSet>
+          <FunctionImport Name="sp_GetBuildingCountforUsers" ReturnType="Collection(EAIDemoModel.sp_GetBuildingCountforUsers_Result)" />
+        </EntityContainer>
+        <ComplexType Name="sp_GetBuildingCountforUsers_Result">
+          <Property Type="Int32" Name="ID" Nullable="false" />
+          <Property Type="String" Name="Name" Nullable="true" MaxLength="200" />
+          <Property Type="String" Name="Email" Nullable="true" MaxLength="200" />
+          <Property Type="Int32" Name="NoOfBuildings" Nullable="true" />
+        </ComplexType>
+      </Schema>
+    </edmx:ConceptualModels>
+    <!-- C-S mapping content -->
+    <edmx:Mappings>
+      <Mapping Space="C-S" xmlns="http://schemas.microsoft.com/ado/2009/11/mapping/cs">
+        <EntityContainerMapping StorageEntityContainer="EAIDemoModelStoreContainer" CdmEntityContainer="EAIDemoEntities">
+          <EntitySetMapping Name="Buildings">
+            <EntityTypeMapping TypeName="EAIDemoModel.Building">
+              <MappingFragment StoreEntitySet="Building">
+                <ScalarProperty Name="ID" ColumnName="ID" />
+                <ScalarProperty Name="Name" ColumnName="Name" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Users">
+            <EntityTypeMapping TypeName="EAIDemoModel.User">
+              <MappingFragment StoreEntitySet="Users">
+                <ScalarProperty Name="ID" ColumnName="ID" />
+                <ScalarProperty Name="Name" ColumnName="Name" />
+                <ScalarProperty Name="Email" ColumnName="Email" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <AssociationSetMapping Name="UserBuilding" TypeName="EAIDemoModel.UserBuilding" StoreEntitySet="UserBuilding">
+            <EndProperty Name="Building">
+              <ScalarProperty Name="ID" ColumnName="BuildingID" />
+            </EndProperty>
+            <EndProperty Name="Users">
+              <ScalarProperty Name="ID" ColumnName="UserID" />
+            </EndProperty>
+          </AssociationSetMapping>
+          <FunctionImportMapping FunctionImportName="sp_GetBuildingCountforUsers" FunctionName="EAIDemoModel.Store.sp_GetBuildingCountforUsers">
+            <ResultMapping>
+              <ComplexTypeMapping TypeName="EAIDemoModel.sp_GetBuildingCountforUsers_Result">
+                <ScalarProperty Name="ID" ColumnName="ID" />
+                <ScalarProperty Name="Name" ColumnName="Name" />
+                <ScalarProperty Name="Email" ColumnName="Email" />
+                <ScalarProperty Name="NoOfBuildings" ColumnName="NoOfBuildings" />
+              </ComplexTypeMapping>
+            </ResultMapping>
+          </FunctionImportMapping>
+        </EntityContainerMapping>
+      </Mapping>
+    </edmx:Mappings>
+  </edmx:Runtime>
+  <!-- EF Designer content (DO NOT EDIT MANUALLY BELOW HERE) -->
+  <Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
+    <Connection>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="MetadataArtifactProcessing" Value="EmbedInOutputAssembly" />
+      </DesignerInfoPropertySet>
+    </Connection>
+    <Options>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="ValidateOnBuild" Value="true" />
+        <DesignerProperty Name="EnablePluralization" Value="true" />
+        <DesignerProperty Name="IncludeForeignKeysInModel" Value="true" />
+        <DesignerProperty Name="UseLegacyProvider" Value="false" />
+        <DesignerProperty Name="CodeGenerationStrategy" Value="None" />
+      </DesignerInfoPropertySet>
+    </Options>
+    <!-- Diagram content (shape and connector positions) -->
+    <Diagrams></Diagrams>
+  </Designer>
+</edmx:Edmx>

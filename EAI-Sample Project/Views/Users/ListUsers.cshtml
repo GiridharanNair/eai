@@ -1,0 +1,47 @@
+﻿@model IEnumerable<EAI_Sample_Project.ViewModel.UsersBuildingCount>
+
+@{
+    ViewBag.Title = "ListUsers";
+}
+
+<h2>User Management System</h2>
+
+<p>
+    @Html.ActionLink("Create Users", "Create")
+</p>
+<table class="table">
+    <tr>
+        <th>
+            @Html.DisplayNameFor(model => model.Name)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Email)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.CountBuildings)
+        </th>
+        <th></th>
+    </tr>
+
+    @foreach (var item in Model)
+    {
+        <tr>
+            <td>
+                <a name="userID" href="@Url.Action("ListBuildings", new { userID = item.ID.ToString()})">
+                    @Html.DisplayFor(modelItem => item.Name)
+                </a>
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Email)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.CountBuildings)
+            </td>
+            <td>
+                @Html.ActionLink("Edit", "Edit", new { id = item.ID }) |
+                @Html.ActionLink("Details", "Details", new { id = item.ID }) |
+                @Html.ActionLink("Delete", "Delete", new { id = item.ID })
+            </td>
+        </tr>
+        }
+    </table>
